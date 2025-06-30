@@ -190,19 +190,19 @@ Original Image              | Preprocessed Image          | Prediction Result
 ![Home](results/home.png)
 
 **About Page**
-![Home](results/about.png)
+![About](results/about.png)
 
 **Upload Page**
-![Home](results/upload.png)
+![Upload](results/upload.png)
 
 **Preprocessing Page**
 ![Preprocessing](results/preprocess.png)
 
 **Prediction Page**
-![Home](results/prediction.png)
+![Prediction](results/prediction.png)
 
 **Result Page**
-![Prediction](results/result.png)
+![Result](results/result.png)
 
 
 
