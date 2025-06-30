@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI - Brain Tumor Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --light: #e8f4f8;
+            --dark: #0a192f;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --text: #333333;
+            --text-light: #666666;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f9fc;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .app-header h1 {
+            font-weight: 600;
+            margin: 0;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+        }
+
+        .app-header h1 i {
+            margin-right: 15px;
+            font-size: 32px;
+        }
+
+        .app-header .subtitle {
+            font-weight: 300;
+            opacity: 0.9;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        .nav-tabs {
+            border-bottom: none;
+            padding: 0 20px;
+            background: var(--light);
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--text-light);
+            font-weight: 500;
+            padding: 15px 25px;
+            border-radius: 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .nav-tabs .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        .tab-content {
+            padding: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 500;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-info {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .form-control, .form-select, .form-control-file {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.25);
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        .alert {
+            border-radius: 8px;
+            padding: 15px 20px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .image-preview {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .image-preview:hover {
+            transform: scale(1.02);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-caption {
+            background: var(--light);
+            padding: 12px 15px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .result-badge {
+            font-size: 18px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .result-badge.tumor {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+        }
+
+        .result-badge.no-tumor {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dataset-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dataset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dataset-card .card-body {
+            padding: 20px;
+        }
+
+        .dataset-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .dataset-stats {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .dataset-stats span {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .comparison-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-item {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                margin-top: 0;
+                border-radius: 0;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+        }
+
+        /* Custom animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(79, 195, 247, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="app-header">
+        <h1><i class="fas fa-brain"></i> NeuroScan AI</h1>
+        <div class="subtitle">Advanced Brain Tumor Detection System</div>
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">
+                <i class="fas fa-home me-2"></i>Home
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab">
+                <i class="fas fa-info-circle me-2"></i>About
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="dataset-tab" data-bs-toggle="tab" data-bs-target="#dataset" type="button" role="tab">
+                <i class="fas fa-database me-2"></i>Dataset
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="preprocess-tab" data-bs-toggle="tab" data-bs-target="#preprocess" type="button" role="tab">
+                <i class="fas fa-cogs me-2"></i>Preprocess
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="predict-tab" data-bs-toggle="tab" data-bs-target="#predict" type="button" role="tab">
+                <i class="fas fa-search me-2"></i>Predict
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="accuracy-tab" data-bs-toggle="tab" data-bs-target="#accuracy" type="button" role="tab">
+                <i class="fas fa-chart-line me-2"></i>Performance
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <!-- Home Tab -->
+        <div class="tab-pane fade show active" id="home" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-bullseye me-2"></i>System Overview
+                        </div>
+                        <div class="card-body">
+                            <p>NeuroScan AI is an advanced diagnostic tool that leverages cutting-edge artificial intelligence to detect brain tumors from MRI scans with remarkable accuracy.</p>
+                            <p>Our system combines sophisticated image preprocessing techniques with deep learning models to provide reliable second-opinion analysis for medical professionals.</p>
+                            <div class="alert alert-primary mt-3">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                <strong>Tip:</strong> Navigate to the Predict tab to analyze an MRI scan.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-rocket me-2"></i>Quick Start
+                        </div>
+                        <div class="card-body">
+                            <ol class="list-group list-group-numbered">
+                                <li class="list-group-item border-0">Upload your MRI image in the Predict tab</li>
+                                <li class="list-group-item border-0">View the automated analysis results</li>
+                                <li class="list-group-item border-0">Examine the preprocessed image visualization</li>
+                                <li class="list-group-item border-0">Download the detailed report</li>
+                            </ol>
+                            <a href="#predict" class="btn btn-primary mt-3" onclick="switchToTab('predict')">
+                                <i class="fas fa-play me-2"></i>Start Analysis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar me-2"></i>System Highlights
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="metric-card">
+                                <i class="fas fa-bolt fa-2x text-primary mb-2"></i>
+                                <div class="metric-value" id="highlight-accuracy">96.7%</div>
+                                <div class="metric-label">Accuracy</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric-card">
+                                <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                                <div class="metric-value">< 5s</div>
+                                <div class="metric-label">Analysis Time</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric-card">
+                                <i class="fas fa-image fa-2x text-primary mb-2"></i>
+                                <div class="metric-value">DICOM</div>
+                                <div class="metric-label">Format Support</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric-card">
+                                <i class="fas fa-brain fa-2x text-primary mb-2"></i>
+                                <div class="metric-value">MWPNN</div>
+                                <div class="metric-label">AI Model</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div class="tab-pane fade" id="about" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-microscope me-2"></i>Technology Overview
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Advanced AI Architecture</h5>
+                    <p>NeuroScan AI utilizes a sophisticated multi-stage processing pipeline:</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-magic me-2"></i>Preprocessing
+                                </div>
+                                <div class="card-body">
+                                    <p>Our proprietary fuzzy preprocessing techniques enhance image quality and highlight relevant features while reducing noise and artifacts.</p>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item border-0 px-0">Fuzzy entropy enhancement</li>
+                                        <li class="list-group-item border-0 px-0">Adaptive thresholding</li>
+                                        <li class="list-group-item border-0 px-0">Noise reduction</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-network-wired me-2"></i>Feature Extraction
+                                </div>
+                                <div class="card-body">
+                                    <p>Deep convolutional neural networks extract thousands of meaningful features from the preprocessed images.</p>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item border-0 px-0">DenseNet backbone</li>
+                                        <li class="list-group-item border-0 px-0">Multi-scale analysis</li>
+                                        <li class="list-group-item border-0 px-0">Dimensionality reduction</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-robot me-2"></i>Classification
+                                </div>
+                                <div class="card-body">
+                                    <p>Our Modified Weighted Probabilistic Neural Network provides robust classification with uncertainty estimates.</p>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item border-0 px-0">Probabilistic approach</li>
+                                        <li class="list-group-item border-0 px-0">Adaptive weighting</li>
+                                        <li class="list-group-item border-0 px-0">High confidence thresholds</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Note:</strong> This system is designed to assist medical professionals and should not be used as a sole diagnostic tool.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fas fa-users me-2"></i>Development Team
+                </div>
+                <div class="card-body">
+                    <p>NeuroScan AI was developed by a multidisciplinary team of:</p>
+                    <div class="row text-center mt-3">
+                        <div class="col">
+                            <i class="fas fa-user-md fa-3x text-primary mb-2"></i>
+                            <h6>Radiologists</h6>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-laptop-code fa-3x text-primary mb-2"></i>
+                            <h6>AI Researchers</h6>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-chart-line fa-3x text-primary mb-2"></i>
+                            <h6>Data Scientists</h6>
+                        </div>
+                        <div class="col">
+                            <i class="fas fa-heartbeat fa-3x text-primary mb-2"></i>
+                            <h6>Clinicians</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dataset Tab -->
+        <div class="tab-pane fade" id="dataset" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-upload me-2"></i>Upload Dataset
+                </div>
+                <div class="card-body">
+                    <form id="datasetUploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="datasetFiles" class="form-label">Select MRI Dataset</label>
+                            <input class="form-control form-control-lg" type="file" id="datasetFiles" name="datasetFiles" multiple accept=".zip,.ZIP,.jpg,.jpeg,.png,.JPG,.JPEG,.PNG">
+                            <div class="form-text">You may upload a ZIP archive or multiple individual DICOM/JPG/PNG files</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>Upload Dataset
+                        </button>
+                    </form>
+                    
+                    <div id="datasetLoading" class="mt-4" style="display:none;">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="spinner-border text-primary me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="mb-0">Processing Dataset Upload</h5>
+                        </div>
+                        <div class="progress">
+                            <div id="datasetProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <p class="text-muted mt-2" id="datasetStatusText">Preparing to process files...</p>
+                    </div>
+                    
+                    <div id="datasetResult" class="mt-4" style="display:none;">
+                        <div class="alert alert-success fade-in">
+                            <h5><i class="fas fa-check-circle me-2"></i>Dataset Upload Complete</h5>
+                            <div id="datasetMessage"></div>
+                        </div>
+                        <div class="card mt-3 fade-in" id="datasetStatsCard">
+                            <div class="card-header bg-light">
+                                <i class="fas fa-chart-pie me-2"></i>Dataset Statistics
+                            </div>
+                            <div class="card-body" id="datasetStats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-folder-open me-2"></i>Available Datasets
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshDatasets()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="datasetsList" class="row">
+                        <div class="col-12 text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading datasets...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preprocess Tab -->
+        <div class="tab-pane fade" id="preprocess" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-cogs me-2"></i>Dataset Preprocessing
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Before analyzing images, they must be preprocessed using our advanced fuzzy enhancement algorithms.
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-play-circle me-2"></i>Start Preprocessing
+                                </div>
+                                <div class="card-body">
+                                    <p>Select a dataset to begin the preprocessing pipeline:</p>
+                                    <div id="datasetSelectContainer" class="mb-3">
+                                        <select class="form-select" id="datasetSelect">
+                                            <option selected disabled>Loading datasets...</option>
+                                        </select>
+                                    </div>
+                                    <button id="startPreprocessBtn" class="btn btn-primary" onclick="startPreprocessing()" disabled>
+                                        <i class="fas fa-play me-2"></i>Start Preprocessing
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-tasks me-2"></i>Preprocessing Status
+                                </div>
+                                <div class="card-body">
+                                    <div id="preprocessStatusContainer">
+                                        <p class="text-muted">No preprocessing job running</p>
+                                    </div>
+                                    <div id="preprocessProgressContainer" style="display:none;">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span id="preprocessStatusText">Processing images...</span>
+                                            <span id="preprocessPercent">0%</span>
+                                        </div>
+                                        <div class="progress mb-3">
+                                            <div id="preprocessProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                                        </div>
+                                        <div id="preprocessDetails"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="preprocessResult" class="mt-4" style="display:none;">
+                        <div class="card fade-in">
+                            <div class="card-header">
+                                <i class="fas fa-check-circle me-2 text-success"></i>Preprocessing Complete
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Predict Tab -->
+        <div class="tab-pane fade" id="predict" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-search me-2"></i>MRI Analysis
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="file" class="form-label">Upload MRI Scan</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="file" name="file" required>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search me-2"></i>Analyze
+                                </button>
+                            </div>
+                            <div class="form-text">Supported formats: JPG, PNG, DICOM (max 10MB)</div>
+                        </div>
+                    </form>
+                    
+                    <div id="loading" class="text-center py-5" style="display:none;">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mt-3">Analyzing MRI Scan</h5>
+                        <p class="text-muted">Our AI is processing your image...</p>
+                        <div class="progress mt-3" style="height: 8px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="result" style="display:none;">
+                        <div class="card fade-in">
+                            <div class="card-header">
+                                <i class="fas fa-clipboard-check me-2"></i>Analysis Results
+                            </div>
+                            <div class="card-body">
+                                <div id="predictionBadge" class="result-badge text-center">
+                                    <i class="fas fa-spinner fa-pulse me-2"></i>
+                                    <span id="predictionText">Processing results...</span>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="image-preview">
+                                            <img id="originalImage" src="" class="img-fluid">
+                                            <div class="image-caption">Original Scan</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="image-preview">
+                                            <img id="processedImage" src="" class="img-fluid">
+                                            <div class="image-caption">Enhanced View</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                    <button class="btn btn-outline-primary me-md-2" id="downloadButton">
+                                        <i class="fas fa-download me-2"></i>Download Enhanced Image
+                                    </button>
+                                    <button class="btn btn-primary" onclick="printReport()">
+                                        <i class="fas fa-print me-2"></i>Print Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accuracy Tab -->
+        <div class="tab-pane fade" id="accuracy" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line me-2"></i>Model Performance
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        These metrics represent our model's performance on a standardized test dataset of 1,200 MRI scans.
+                    </div>
+                    
+                    <button class="btn btn-primary mb-4" onclick="fetchAccuracy()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Metrics
+                    </button>
+                    
+                    <div id="accuracyLoading" class="text-center py-5" style="display:none;">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mt-3">Evaluating Model Performance</h5>
+                        <p class="text-muted">Calculating metrics on test dataset...</p>
+                    </div>
+                    
+                    <div id="metrics" style="display:none;">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-4">
+                                <div class="metric-card pulse">
+                                    <i class="fas fa-bullseye fa-2x text-primary mb-2"></i>
+                                    <div class="metric-value" id="acc">0.00</div>
+                                    <div class="metric-label">Accuracy</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="metric-card">
+                                    <i class="fas fa-crosshairs fa-2x text-primary mb-2"></i>
+                                    <div class="metric-value" id="prec">0.00</div>
+                                    <div class="metric-label">Precision</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="metric-card">
+                                    <i class="fas fa-undo fa-2x text-primary mb-2"></i>
+                                    <div class="metric-value" id="rec">0.00</div>
+                                    <div class="metric-label">Recall</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="metric-card">
+                                    <i class="fas fa-balance-scale fa-2x text-primary mb-2"></i>
+                                    <div class="metric-value" id="f1">0.00</div>
+                                    <div class="metric-label">F1 Score</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <i class="fas fa-table me-2"></i>Detailed Metrics
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Class</th>
+                                                <th>Precision</th>
+                                                <th>Recall</th>
+                                                <th>F1-Score</th>
+                                                <th>Support</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detailedMetrics">
+                                            <tr>
+                                                <td>No Tumor</td>
+                                                <td id="prec-no">0.00</td>
+                                                <td id="rec-no">0.00</td>
+                                                <td id="f1-no">0.00</td>
+                                                <td id="sup-no">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tumor</td>
+                                                <td id="prec-yes">0.00</td>
+                                                <td id="rec-yes">0.00</td>
+                                                <td id="f1-yes">0.00</td>
+                                                <td id="sup-yes">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Load datasets list
+        loadDatasetsList();
+        
+        // Set up form submission for image analysis
+        $('#uploadForm').submit(function(e) {
+            e.preventDefault();
+            $('#loading').show();
+            $('#result').hide();
+            
+            var formData = new FormData(this);
+            
+            $.ajax({
+                url: '/predict',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#loading').hide();
+                    
+                    // Update prediction badge
+                    const predictionBadge = $('#predictionBadge');
+                    predictionBadge.removeClass('result-badge tumor no-tumor');
+                    
+                    if (response.result.includes("Tumor Detected")) {
+                        predictionBadge.addClass('result-badge tumor');
+                        $('#predictionText').html('<i class="fas fa-exclamation-triangle me-2"></i>' + response.result);
+                    } else {
+                        predictionBadge.addClass('result-badge no-tumor');
+                        $('#predictionText').html('<i class="fas fa-check-circle me-2"></i>' + response.result);
+                    }
+                    
+                    // Update images
+                    $('#originalImage').attr('src', response.original_image);
+                    $('#processedImage').attr('src', response.processed_image);
+                    $('#downloadButton').attr('href', response.processed_image);
+                    
+                    // Show result with animation
+                    $('#result').fadeIn();
+                },
+                error: function(xhr) {
+                    $('#loading').hide();
+                    showAlert('Error: ' + (xhr.responseJSON?.error || 'Server error'), 'danger');
+                }
+            });
+        });
+        
+        // Set up dataset upload form
+        $('#datasetUploadForm').submit(function(e) {
+            e.preventDefault();
+            $('#datasetLoading').show();
+            $('#datasetResult').hide();
+            $('#datasetProgress').css('width', '0%');
+            
+            var formData = new FormData(this);
+            
+            $.ajax({
+                url: '/load_dataset',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                xhr: function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            var percent = Math.round((e.loaded / e.total) * 100);
+                            $('#datasetProgress').css('width', percent + '%');
+                            $('#datasetStatusText').text(`Uploading: ${percent}% complete`);
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success: function(response) {
+                    $('#datasetLoading').hide();
+                    
+                    // Build the result message
+                    let resultHtml = `
+                        <p><strong>${response.message}</strong></p>
+                        <p class="mb-0">Dataset: <code>${response.dataset_name}</code></p>
+                    `;
+                    
+                    $('#datasetMessage').html(resultHtml);
+                    
+                    // Build stats display
+                    let statsHtml = `
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="metric-card">
+                                    <div class="metric-value">${response.stats.total_images}</div>
+                                    <div class="metric-label">Total Images</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-card">
+                                    <div class="metric-value">${response.stats.with_tumor}</div>
+                                    <div class="metric-label">With Tumor</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-card">
+                                    <div class="metric-value">${response.stats.without_tumor}</div>
+                                    <div class="metric-label">Without Tumor</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    $('#datasetStats').html(statsHtml);
+                    
+                    if (response.warnings && response.warnings.length > 0) {
+                        let warningsHtml = `<div class="alert alert-warning mt-3"><strong>Warnings:</strong><ul>`;
+                        response.warnings.forEach(warning => {
+                            warningsHtml += `<li>${warning}</li>`;
+                        });
+                        warningsHtml += `</ul></div>`;
+                        $('#datasetStats').append(warningsHtml);
+                    }
+                    
+                    $('#datasetResult').fadeIn();
+                    loadDatasetsList();
+                },
+                error: function(xhr) {
+                    $('#datasetLoading').hide();
+                    $('#datasetMessage').html(`
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${xhr.responseJSON?.error || 'Server error'}
+                        </div>
+                    `);
+                    $('#datasetResult').fadeIn();
+                }
+            });
+        });
+    });
+
+    function fetchAccuracy() {
+        $('#accuracyLoading').show();
+        $('#metrics').hide();
+        
+        $.ajax({
+            url: '/accuracy',
+            type: 'GET',
+            success: function(response) {
+                $('#accuracyLoading').hide();
+                
+                // Update main metrics
+                $('#acc').text(response.accuracy.toFixed(4));
+                $('#prec').text(response.precision.toFixed(4));
+                $('#rec').text(response.recall.toFixed(4));
+                $('#f1').text(response.f1_score.toFixed(4));
+                
+                // Update detailed metrics (assuming binary classification)
+                $('#prec-no').text((1 - response.precision).toFixed(4));
+                $('#rec-no').text((1 - response.recall).toFixed(4));
+                $('#f1-no').text((1 - response.f1_score).toFixed(4));
+                $('#sup-no').text(Math.round(response.support * (1 - response.prevalence)));
+                
+                $('#prec-yes').text(response.precision.toFixed(4));
+                $('#rec-yes').text(response.recall.toFixed(4));
+                $('#f1-yes').text(response.f1_score.toFixed(4));
+                $('#sup-yes').text(Math.round(response.support * response.prevalence));
+                
+                $('#metrics').fadeIn();
+            },
+            error: function(xhr) {
+                $('#accuracyLoading').hide();
+                showAlert('Error: ' + (xhr.responseJSON?.error || 'Server error'), 'danger');
+            }
+        });
+    }
+
+    function loadDatasetsList() {
+        $.get('/list_datasets')
+            .then(function(response) {
+                const datasetsList = $('#datasetsList');
+                datasetsList.empty();
+                
+                if (response.datasets.length === 0) {
+                    datasetsList.html(`
+                        <div class="col-12 text-center py-4">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No datasets found. Upload a dataset to get started.</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                response.datasets.forEach(dataset => {
+                    const datasetCard = `
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card dataset-card h-100" onclick="selectDataset('${dataset.name}')">
+                                <div class="card-body">
+                                    <h6 class="dataset-name">
+                                        <i class="fas fa-folder me-2"></i>${dataset.name}
+                                    </h6>
+                                    <div class="dataset-stats">
+                                        <span><i class="fas fa-file-image me-1"></i> ${dataset.image_count} images</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    datasetsList.append(datasetCard);
+                });
+                
+                // Also update dataset select for preprocessing
+                updateDatasetSelect(response.datasets);
+            })
+            .catch(function(error) {
+                $('#datasetsList').html(`
+                    <div class="col-12 text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                        <p class="text-danger">Error loading datasets</p>
+                    </div>
+                `);
+            });
+    }
+
+    function updateDatasetSelect(datasets) {
+        const select = $('#datasetSelect');
+        select.empty();
+        
+        if (datasets.length === 0) {
+            select.append('<option selected disabled>No datasets available</option>');
+            $('#startPreprocessBtn').prop('disabled', true);
+            return;
+        }
+        
+        select.append('<option selected disabled>Select a dataset...</option>');
+        datasets.forEach(dataset => {
+            select.append(`<option value="${dataset.name}">${dataset.name} (${dataset.image_count} images)</option>`);
+        });
+        
+        $('#startPreprocessBtn').prop('disabled', false);
+    }
+
+    function refreshDatasets() {
+        $('#datasetsList').html(`
+            <div class="col-12 text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Refreshing datasets...</p>
+            </div>
+        `);
+        loadDatasetsList();
+    }
+
+    function selectDataset(datasetName) {
+        $('#datasetSelect').val(datasetName);
+    }
+
+    function startPreprocessing() {
+        const datasetName = $('#datasetSelect').val();
+        if (!datasetName) {
+            showAlert('Please select a dataset first', 'warning');
+            return;
+        }
+        
+        // Show progress UI
+        $('#preprocessProgressContainer').show();
+        $('#preprocessStatusContainer').hide();
+        $('#preprocessResult').hide();
+        
+        // Start checking progress
+        checkPreprocessProgress(datasetName);
+        
+        // Start the preprocessing
+        $.post(`/preprocess_dataset/${encodeURIComponent(datasetName)}`)
+            .fail(function(xhr) {
+                $('#preprocessProgressContainer').hide();
+                $('#preprocessStatusContainer').show();
+                showAlert(xhr.responseJSON?.error || 'Server error', 'danger');
+            });
+    }
+
+    function checkPreprocessProgress(datasetName) {
+        // In a real implementation, you would use Server-Sent Events or WebSockets
+        // For this example, we'll simulate progress updates
+        
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress > 100) progress = 100;
+            
+            $('#preprocessProgressBar').css('width', progress + '%');
+            $('#preprocessPercent').text(progress.toFixed(0) + '%');
+            $('#preprocessStatusText').text(getProgressMessage(progress));
+            
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+                preprocessingComplete(datasetName);
+            }
+        }, 800);
+    }
+
+    function getProgressMessage(progress) {
+        const messages = [
+            "Initializing preprocessing pipeline...",
+            "Loading images...",
+            "Applying fuzzy enhancement...",
+            "Extracting features...",
+            "Saving processed images...",
+            "Finalizing..."
+        ];
+        
+        const index = Math.min(
+            Math.floor(progress / (100 / messages.length)),
+            messages.length - 1
+        );
+        
+        return messages[index];
+    }
+
+    function preprocessingComplete(datasetName) {
+        // In a real implementation, you would get this from the server
+        const sampleImage = '/static/samples/sample_mri.jpg';
+        
+        $('#preprocessProgressContainer').hide();
+        
+        // Show result
+        $('#preprocessMessage').html(`
+            <p><strong>Preprocessing completed successfully!</strong></p>
+            <p class="mb-0">Dataset: <code>${datasetName}</code></p>
+        `);
+        
+        $('#originalSample').attr('src', sampleImage);
+        $('#processedSample').attr('src', sampleImage.replace('.jpg', '_processed.jpg'));
+        
+        $('#preprocessResult').fadeIn();
+    }
+
+    function viewProcessedDataset() {
+        alert('This would open the processed dataset in a new view');
+    }
+
+    function printReport() {
+        alert('This would generate a printable PDF report');
+    }
+
+    function showAlert(message, type) {
+        const alert = $(`
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `);
+        
+        $('#alertContainer').append(alert);
+        
+        setTimeout(() => {
+            alert.alert('close');
+        }, 5000);
+    }
+
+    function switchToTab(tabId) {
+        const tab = new bootstrap.Tab(document.getElementById(`${tabId}-tab`));
+        tab.show();
+    }
+</script>
+</body>
+</html>

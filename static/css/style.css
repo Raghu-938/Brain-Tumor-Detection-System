@@ -1,0 +1,86 @@
+body {
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    margin-top: 30px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.nav-tabs .nav-link {
+    color: #007bff;
+}
+
+.tab-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+}
+
+#loading,
+#accuracyLoading {
+    display: none;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #ff6f00;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #f9f9f9;
+}
+
+.btn {
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+#result h5, #metrics h5 {
+    color: #2c3e50;
+    margin-top: 20px;
+}
+
+#downloadButton {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
